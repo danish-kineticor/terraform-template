@@ -1,0 +1,26 @@
+image: alpine:latest
+tasks:
+  - name: GPG key setup
+    before: |
+      echo 'pinentry-mode loopback' >> $HOME/.gnupg/gpg.conf
+      echo 'allow-loopback-pinentry' >> $HOME/.gnupg/gpg-agent.conf
+      gpg-connect-agent reloadagent /bye > /dev/null 2>&1
+      KEY_ID=$(echo $GPG_KEY | base64 -di | gpg --batch --import 2>&1 | sed -n '1s/gpg:key \([A-Za-z0-9]*\):.*/\1p')
+      git config --global user.signingkey $KEY_ID
+      git config --global commit.gpgsign true
+      git config --global tag.gpgsign true
+  - command: |
+      : ${GITLAB_ACCESS_TOKEN?"Add GITLAB_ACCESS_TOKEN to your gitpod settings to enable automatic setting of Terraform environment variables"}
+      # Configure terraform dummy username
+      export TF_HTTP_USERNAME=notused
+      # Configure terraform backend http password
+      export TF_HTTP_PASSWORD=$TF_TOKEN
+      # Set env var for tf config file
+      export TF_CLI_CONFIG_FILE=$HOME/.terraformrc
+      export TF REGISTRY_TOKEN=$GITLAB_ACCESS_TOKEN
+  - command: pip3 install checkov
+  - command: pre-commit install
+# Define a list of extensions for vscode workspace
+vscode:
+  extensions:
+    - hashicorp.terraform

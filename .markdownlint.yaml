@@ -1,0 +1,14 @@
+# Default state for all rules
+default: true
+
+# Ignore some rules as tfdocs breaks them
+# MD013/line-length - Line Length
+MD013:
+  line_length: 2000
+  tables: false
+
+# MD033/no-inline-html - Inline HTML is allowed when MD033 is set to false
+MD033: false
+
+# MD051/link-fragments = Link fragments should be valid
+MD051: false

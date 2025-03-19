@@ -1,0 +1,12 @@
+compact: true
+directory:
+- .
+download-external-modules: true
+external-modules-download-path: .external_modules
+framework:
+- all
+mask: []
+queit: true
+summary-position: bottom
+skip-check:
+  - CKV_TF_1 # Ensure terraform module sources use a commit hash
